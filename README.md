@@ -27,3 +27,24 @@ I personally recommend it to run it in a virtual environment, as follows:
 you can enter the following command: `pip3 install -r requirements.txt`
 6. Assuming you're on the project's folder, now you can run `python3 main.py`
 7. When you're done using the virtual environment, you can deactivate it by entering the following command: `deactivate`
+
+
+## Functions definitions
+### `getYfinanceHistoric`
+This function downloads historic price data for a specified ticker `symbol` from Yahoo Finance using the `yfinance` library. 
+The data is returned as a Pandas dataframe with columns for open, high, low, close, and volume. 
+The function takes optional arguments for `start time`, `end time`, and `interval`.
+### `getBinanceHistoric`
+This function downloads historic price data for a specified ticker `symbol` from the Binance API. 
+The data is returned as a Pandas dataframe with columns for open, high, low, close, and volume. 
+The function takes optional arguments for `start time`, `end time`, `interval`, and `row limit`. 
+Note that the `startTime` and `endTime` arguments are specified in **milliseconds since epoch**.
+### `dateToMs`
+This function converts a date string in the format `"YYYY-MM-DD"` to **milliseconds since epoch**. 
+This conversion is used in the `getBinanceHistoric` function to specify start and end times in the API request.
+
+
+## Aknowledgements
+We would like to acknowledge the work done by Juan Pablo Pisano, ownser of [this repository](https://github.com/gauss314).
+Their open-source project has provided valuable resources and tools for backtesting trading algorithms and has inspired the development of many other similar projects. 
+I used his code as a reference while developing some of the tools in this repository, and I'm grateful for their contributions to the community.
