@@ -75,14 +75,69 @@ def getBinanceHistoric(symbol, interval='1d', startTime=None, endTime=None, limi
     return df
 
 
+def getBinanceHistoricFull(symbol, interval, startTime, endTime):
+    """
+    Getting historic Data from Binance API
+    looping getBinanceHistoric function to cover
+    long dates ranges.
+
+    :param    symbol : str
+            ticker to download
+    :param    interval : str
+            Valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1w,1M,3M
+    :param    startTime: str
+            Download start date string (YYYY-MM-DD) or _datetime.
+            Default is 2000-01-01
+    :param    endTime: str
+            Download end date string (YYYY-MM-DD) or _datetime.
+            Default is now
+
+    :return    data : dataframe
+            index : DatetimeIndex
+            columns : ['Open', 'High', 'Low', 'Close', 'Volume']
+    """
+    historic = getBinanceHistoric(symbol,
+                                  interval=interval,
+                                  startTime=startTime,
+                                  endTime=endTime)
+
+    # Create Dataframe to append values
+    data = historic
+
+    # Check if last row equals endTime
+    lastValue = dateToMs(f'{historic.index[-1]}')
+
+    while lastValue < endTime:
+        historic = getBinanceHistoric(symbol,
+                                      interval=interval,
+                                      startTime=lastValue,
+                                      endTime=endTime)
+
+        lastValue = dateToMs(f'{historic.index[-1]}')
+
+        if lastValue == dateToMs(f'{data.index[-1]}'):
+            break
+
+        data = pd.concat([data, historic])  # Use pd.concat to concatenate DataFrames
+
+    # Erase duplicates
+    data.drop_duplicates(inplace=True)
+
+    return data
+
+
+
 def dateToMs(dateStr):
     """
     Convert a date string to milliseconds since epoch.
 
     :param dateStr: str
-        Date string in YYYY-MM-DD format.
+        Date string in YYYY-MM-DD format or YYYY-MM-DD HH:MM:SS format.
 
     :return: int
         Milliseconds since epoch.
     """
-    return int(datetime.strptime(dateStr, '%Y-%m-%d').timestamp()) * 1000
+    if len(dateStr) == 10:  # Check if only date is provided (YYYY-MM-DD)
+        dateStr += " 00:00:00"  # Append time "00:00:00" to the date
+
+    return int(datetime.strptime(dateStr, '%Y-%m-%d %H:%M:%S').timestamp()) * 1000
