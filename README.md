@@ -1,5 +1,5 @@
 # Python for Technical Analysis and Trading Strategies
-
+![img.png](img.png)
 ## Purpose
 This repository provides a comprehensive set of tools for traders and investors to perform technical analysis of financial markets using Python.
 
